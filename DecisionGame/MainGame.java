@@ -1,6 +1,9 @@
 package DecisionGame;
 
-
+import java.io.File;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javax.swing.*;
 import com.sun.tools.javac.Main;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.layout.Background;
@@ -24,11 +27,14 @@ public class MainGame extends JFrame implements ActionListener {
     private Container container;
     private LayoutManager overlay;
     private JRadioButton option1, option2;
+    static MediaPlayer mediaPlayer;
+    String gameAudio = "C:\\Users\\Guest1\\Desktop\\JavaProject\\DecisionGame\\BackgroundNoise.mp3";
 
 
     public MainGame() {
         MenuFrame = new JFrame();
-
+        final JFXPanel fxPanel = new JFXPanel();
+        AudioPlayer player = new AudioPlayer();
         MenuFrame.setIconImage(new ImageIcon(getClass().getResource("icon.jpg")).getImage());
 
         MenuFrame.setSize(700, 450);
@@ -77,8 +83,8 @@ public class MainGame extends JFrame implements ActionListener {
     }
 
     public void displayUI(String StoryImg, String storyText, String storyButton1, String storyButton2){
-        //AudioPlayer player = new AudioPlayer();
-        //JFXPanel fxPanel = new JFXPanel();
+
+
         GameFrame = new JFrame();
         GameFrame.setLayout(new BorderLayout());
         GameFrame.setIconImage(new ImageIcon(getClass().getResource("icon.jpg")).getImage());
@@ -87,7 +93,7 @@ public class MainGame extends JFrame implements ActionListener {
         GameFrame.getContentPane().setBackground(Color.white);
         GameFrame.setTitle("Choose your Story");
         GameFrame.setLocationRelativeTo(null);
-        //AudioPlayer.BackgroundAudio("IntroNoise.mp3");
+        AudioPlayer.BackgroundAudio("C:\\Users\\Guest1\\Desktop\\JavaProject\\DecisionGame\\IntroNoise.mp3");
 
         container = GameFrame.getContentPane();
 
@@ -140,11 +146,27 @@ public class MainGame extends JFrame implements ActionListener {
         GameFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         GameFrame.setVisible(true);
     }
+    public static void playAudio(String path)
+    {
+
+        Media audioClip = new Media(new File(path).toURI().toString());
+
+        mediaPlayer = new MediaPlayer(audioClip);
+
+        try {
+            mediaPlayer.play();
+        }
+        catch(Exception e) {
+            JOptionPane.showMessageDialog(null,"The audio file " + path + " could not be played! Please re-check path!");
+        }
+
+    }
 
     public void actionPerformed(ActionEvent e) {
         String UI = e.getActionCommand();
 
         if(UI == "Press to Play" || e.getSource()== this.StartButton){
+            playAudio(gameAudio);
             displayUI("Story1.jpg","You're at a party, Its getting late...","Go Home","Stay");
         }
 
