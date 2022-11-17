@@ -19,8 +19,8 @@ import static java.awt.BorderLayout.SOUTH;
 public class MainGame extends JFrame implements ActionListener {
 
 
-    private JLabel WelcomeSign, GameLabel, gameImage;
-    private JPanel HeadingPanel, GamePanel, StartButtonPanel, Rbuttons,GameBackgroundImage;
+    private JLabel WelcomeSign, GameLabel, gameImage, sanityLabel;
+    private JPanel HeadingPanel, GamePanel, StartButtonPanel, Rbuttons,GameBackgroundImage, sanityPanel;
     private JButton StartButton;
     private JFrame MenuFrame;
     private JFrame GameFrame;
@@ -28,7 +28,7 @@ public class MainGame extends JFrame implements ActionListener {
     private LayoutManager overlay;
     private JRadioButton option1, option2;
     static MediaPlayer mediaPlayer;
-    String gameAudio = "C:\\Users\\Guest1\\Desktop\\JavaProject\\DecisionGame\\BackgroundNoise.mp3";
+    String gameAudio = "C:\\Users\\T00222705\\Desktop\\NewminiProject\\DecisionGame\\BackgroundNoise.mp3";
 
 
     public MainGame() {
@@ -93,7 +93,6 @@ public class MainGame extends JFrame implements ActionListener {
         GameFrame.getContentPane().setBackground(Color.white);
         GameFrame.setTitle("Choose your Story");
         GameFrame.setLocationRelativeTo(null);
-        AudioPlayer.BackgroundAudio("C:\\Users\\Guest1\\Desktop\\JavaProject\\DecisionGame\\IntroNoise.mp3");
 
         container = GameFrame.getContentPane();
 
@@ -126,6 +125,8 @@ public class MainGame extends JFrame implements ActionListener {
         option1.setFont(new Font("Chiller",1,30));
         option2.setFont(new Font("Chiller",1,30));
         Rbuttons.setBounds(200,600,700,100);
+
+
 
         ButtonGroup Btngroup = new ButtonGroup();
         Btngroup.add(option1);
