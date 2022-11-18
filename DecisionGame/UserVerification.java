@@ -1,5 +1,7 @@
 package DecisionGame;
 
+import com.sun.tools.javac.Main;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -76,9 +78,9 @@ public class UserVerification extends JFrame implements ActionListener {
         }
 
 
-public void DOBverify(){
+public boolean DOBverify(String dateOfBirth){
 
-    String dateOfBirth = userDOB.getText();
+
     boolean valid = false;
     while (!dateOfBirth.equals("x")) {
         while (!valid) {
@@ -99,23 +101,24 @@ public void DOBverify(){
                                 valid = true;
 
                             } else
-                                JOptionPane.showMessageDialog(null, "Date must be in right format Eg. 05/03/2002 day between 1-31");
+                                JOptionPane.showMessageDialog(null, "Date must be in right format Eg. dd/mm/yy day between 1-31");
 
                         } else
-                            JOptionPane.showMessageDialog(null, "Date must be in right format Eg. 05/03/2002  between 1-12 months");
+                            JOptionPane.showMessageDialog(null, "Date must be in right format Eg. dd/mm/yy  between 1-12 months");
 
                     } else
-                        JOptionPane.showMessageDialog(null, "Date must be in right format Eg. 05/03/2002 Year less than 2004");
+                        JOptionPane.showMessageDialog(null, "Date must be in right format Eg. dd/mm/yy Year less than 2004");
 
                 } else
-                    JOptionPane.showMessageDialog(null, "Date must be in right format Eg. 05/03/2002");
+                    JOptionPane.showMessageDialog(null, "Date must be in right format Eg. dd/mm/yy");
 
             } else
-                JOptionPane.showMessageDialog(null, "Date must be in right format Eg. 05/03/2002 and 8 in length");
-
+                JOptionPane.showMessageDialog(null, "Date must be in right format Eg. dd/mm/yy and 8 in length");
+            break;
         }
-
+        break;
     }
+    return valid;
 }
     public void actionPerformed(ActionEvent e) {
 
@@ -127,9 +130,13 @@ public void DOBverify(){
         }
         else if(e.getSource() == this.continueBtn)
         {
-            DOBverify();
+            if(DOBverify(userDOB.getText()))
+            {
+                MainGame mg = new MainGame();
+            }
 
-            new MainGame();
+
+
 
         }
 
