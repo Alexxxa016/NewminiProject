@@ -11,13 +11,14 @@ public class UserVerification extends JFrame implements ActionListener {
 
     private JFrame verifyFrame;
     private JPanel verifyPanel;
-    private JLabel textLabel, nickname, DOB, ageVerification;
+    private JLabel textLabel, DOB, ageVerification;
     private JButton yesBtn, noBtn, continueBtn;
-    private JTextField userInput, userDOB;
+    private JTextField  userDOB;
 
     public UserVerification() {
         verifyFrame = new JFrame();
-        verifyFrame.setTitle("authentication");
+        verifyFrame.setIconImage(new ImageIcon(getClass().getResource("icon.jpg")).getImage());
+        verifyFrame.setTitle("Age Verification");
         verifyFrame.setSize(500, 350);
         verifyFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         verifyFrame.setLocationRelativeTo(null);
@@ -29,12 +30,6 @@ public class UserVerification extends JFrame implements ActionListener {
         textLabel = new JLabel("Please enter required data to proceed");
         textLabel.setFont(new Font("Congenial Black", 1, 20));
         textLabel.setBounds(45, 10, 500, 20);
-
-        nickname = new JLabel("Player nickname: ");
-        nickname.setBounds(100, 40, 500, 30);
-
-        userInput = new JTextField();
-        userInput.setBounds(225, 45, 150, 20);
 
         DOB = new JLabel("Are you 18 years of age or older?");
         DOB.setBounds(130, 70, 700, 30);
@@ -50,8 +45,6 @@ public class UserVerification extends JFrame implements ActionListener {
         verifyPanel.add(noBtn);
 
         verifyPanel.add(DOB);
-        verifyPanel.add(userInput);
-        verifyPanel.add(nickname);
         verifyPanel.add(textLabel);
         verifyFrame.add(verifyPanel);
         verifyFrame.setVisible(true);

@@ -16,20 +16,36 @@ import static java.awt.BorderLayout.*;
 public class MainGame extends JFrame implements ActionListener {
 
     String position="";
-    private JLabel WelcomeSign, GameLabel, gameImage;
-    private JPanel HeadingPanel, GamePanel, StartButtonPanel, Rbuttons,GameBackgroundImage;
-    private JButton StartButton;
-    private JFrame MenuFrame;
-    private JFrame GameFrame;
+    private JLabel WelcomeSign, GameLabel, gameImage, OptionLabel, stopwatchLabel, watchLabel;
+    private JPanel HeadingPanel, GamePanel, StartButtonPanel, Rbuttons,GameBackgroundImage, continuePanel;
+    private JButton StartButton, viewPlayer, addPlayer, removePlayer;
+    private JFrame MenuFrame, continueFrame, GameFrame;
     private Container container;
     private LayoutManager overlay;
     private JRadioButton option1, option2;
     private ButtonGroup Btngroup;
     static MediaPlayer mediaPlayer;
+    int elapsedTime =0;
+    int seconds =0;
+    int minutes =0;
+    boolean started = false;
+    String secondsString = String.format("%02d", seconds);
+    String minutesString = String.format("%02d", minutes);
     ChoiceHandler choiceHandler = new ChoiceHandler();
+    Timer timer = new Timer(1000, new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            elapsedTime += 1000;
+            minutes = (elapsedTime/60000) % 60;
+            seconds = (elapsedTime/1000) % 60;
+            secondsString = String.format("%02d", seconds);
+            minutesString = String.format("%02d", minutes);
+            stopwatchLabel.setText(minutesString+":"+secondsString);
+
+        }
+    });
 
     String gameAudio = "DecisionGame/BackgroundNoise.mp3";
-
 
     public MainGame() {
         MenuFrame = new JFrame();
@@ -74,11 +90,8 @@ public class MainGame extends JFrame implements ActionListener {
 
         MenuFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         MenuFrame.setVisible(true);
-
     }
-
     public static void main(String[] args) {
-
         new MainGame();
     }
 
@@ -103,9 +116,7 @@ public class MainGame extends JFrame implements ActionListener {
         GamePanel.add(GameLabel);
         GameFrame.add(GamePanel,BorderLayout.NORTH);
 
-
         GameBackgroundImage = new JPanel();
-
 
         gameImage = new JLabel();
         gameImage.setIcon(new ImageIcon(getClass().getResource(StoryImg)));
@@ -114,9 +125,10 @@ public class MainGame extends JFrame implements ActionListener {
         GameBackgroundImage.add(gameImage);
         GameFrame.add(GameBackgroundImage, CENTER);
 
-
         Rbuttons = new JPanel();
+        OptionLabel = new JLabel();
         Rbuttons.setLayout(new FlowLayout());
+        OptionLabel.setBounds(1,500,450, 300);
 
         option1 = new JRadioButton(storyButton1);
         option1.setFont(new Font("Chiller",1,30));
@@ -128,18 +140,73 @@ public class MainGame extends JFrame implements ActionListener {
         option2.addActionListener(choiceHandler);
         option2.setActionCommand("opt2");
 
+        stopwatchLabel = new JLabel();
+        stopwatchLabel.setFont(new Font("Chiller",1,15));
+        stopwatchLabel.setText(minutesString+":"+secondsString);
+
+
         Btngroup = new ButtonGroup();
         Btngroup.add(option1);
         Btngroup.add(option2);
 
+        Rbuttons.add(OptionLabel);
+        GameFrame.add(OptionLabel);
+
         Rbuttons.add(option1);
         Rbuttons.add(option2);
+        Rbuttons.add(stopwatchLabel);
         GameFrame.add(Rbuttons, SOUTH);
         container.add(GameBackgroundImage);
         container.add(gameImage);
 
         GameFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         GameFrame.setVisible(true);
+    }
+    public void continuationFrame(){
+        continueFrame = new JFrame("Player Details");
+        continueFrame.setIconImage(new ImageIcon(getClass().getResource("icon.jpg")).getImage());
+        continuePanel = new JPanel();
+        continuePanel.setLayout(null);
+        continuePanel.setBackground(Color.BLACK);
+
+        addPlayer = new JButton("Add Player");
+        addPlayer.setMnemonic('A');
+        addPlayer.setFont(new Font("Chiller",1,20));
+        addPlayer.setBackground(Color.DARK_GRAY);
+        addPlayer.setBounds(15,25,15,25);
+        addPlayer.setLocation(100,575);
+        addPlayer.setForeground(Color.WHITE);
+        addPlayer.setSize(125,50);
+        addPlayer.addActionListener(this);
+        continuePanel.add(addPlayer);
+
+        removePlayer = new JButton("Remove Player");
+        removePlayer.setBackground(Color.DARK_GRAY);
+        removePlayer.setFont(new Font("Chiller",1,20));
+        removePlayer.setForeground(Color.WHITE);
+        removePlayer.setBounds(300,575,135,50);
+        removePlayer.addActionListener(this);
+        continuePanel.add(removePlayer);
+
+        viewPlayer = new JButton("View Stats");
+        viewPlayer.setBackground(Color.DARK_GRAY);
+        viewPlayer.setFont(new Font("Chiller",1,20));
+        viewPlayer.setForeground(Color.WHITE);
+        viewPlayer.setBounds(500,575,125,50);
+        viewPlayer.addActionListener(this);
+        continuePanel.add(viewPlayer);
+
+        continueFrame.setSize(700, 700);
+        continueFrame.setLocationRelativeTo(null);
+        continueFrame.setResizable(false);
+        continueFrame.add(continuePanel);
+        continueFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        continueFrame.setVisible(true);
+
+        watchLabel = new JLabel();
+        watchLabel.setBounds(500,250,120,50);
+
+        continuePanel.add(watchLabel);
     }
 
     public static void playAudio(String path)
@@ -155,6 +222,17 @@ public class MainGame extends JFrame implements ActionListener {
         catch(Exception e) {
             JOptionPane.showMessageDialog(null,"The audio file " + path + " could not be played! Please re-check path!");
         }
+
+    }
+
+
+    public void start(){
+        timer.start();
+    }
+    public void stop(){
+        timer.stop();
+    }
+    public void reset(){
 
     }
     public void Slide1(){
@@ -194,7 +272,7 @@ public class MainGame extends JFrame implements ActionListener {
     public void Slide8()
     {
         position = "8";
-        displayUI("Pictures/monster.png","Your curiosity killed you","","");
+        displayUI("Pictures/monster.png","Your curiosity killed you","","Continue");
     }
     public void Slide9()
     {
@@ -209,7 +287,7 @@ public class MainGame extends JFrame implements ActionListener {
     public void Slide11()
     {
         position = "11";
-        displayUI("Pictures/survived.jpg","You slept through the night and made it to safety","","");
+        displayUI("Pictures/survived.jpg","You slept through the night and made it to safety","","Continue");
     }
     public void Slide12()
     {
@@ -269,7 +347,7 @@ public class MainGame extends JFrame implements ActionListener {
     public void Slide25()
     {
         position = "25";
-        displayUI("Pictures/firehouse.jpg","You burn the house down Cremating the creature inside ","","");
+        displayUI("Pictures/firehouse.jpg","You burn the house down Cremating the creature inside ","","Continue");
     }
     public void Slide26()
     {
@@ -299,7 +377,7 @@ public class MainGame extends JFrame implements ActionListener {
     public void Slide31()
     {
         position = "31";
-        displayUI("Pictures/monster2.png","The creature shreds you with his teeth and you are devoured","","");
+        displayUI("Pictures/monster2.png","The creature shreds you with his teeth and you are devoured","","Continue");
     }// no 32
     public void Slide33()
     {
@@ -314,7 +392,7 @@ public class MainGame extends JFrame implements ActionListener {
     public void Slide35()
     {
         position = "35";
-        displayUI("Pictures/monster2.png","It takes you to the forest and tears off your libs.. your soul leaves your body you get burried alive","","");
+        displayUI("Pictures/monster2.png","It takes you to the forest and tears off your libs.. your soul leaves your body you get burried alive","","Continue");
     }
 
 
@@ -326,11 +404,13 @@ public class MainGame extends JFrame implements ActionListener {
         if (UI == "Press to Play" || e.getSource() == this.StartButton) {
             playAudio(gameAudio);
             Slide1();
-
+            start();
 
         }
 
     }
+
+
         public class ChoiceHandler implements ActionListener{
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -343,11 +423,13 @@ public class MainGame extends JFrame implements ActionListener {
                         {
                             case "opt1":
                                 Slide4();
+
                                 break;
                             case "opt2":
                                 Slide2();
                                 break;
                         }
+
                         break;
                     case "2":
                     switch (yourOption)
@@ -420,6 +502,9 @@ public class MainGame extends JFrame implements ActionListener {
                             case "opt1":
                                 break;
                             case "opt2":
+                                continuationFrame();
+                                watchLabel.setText(minutesString+":"+secondsString);
+                                stop();
                                 break;
                         }
                         break;
@@ -453,10 +538,10 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-
                                 break;
                             case "opt2":
-
+                                continuationFrame();
+                                stop();
                                 break;
                         }
                         break;
