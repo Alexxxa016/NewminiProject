@@ -10,6 +10,8 @@ import javafx.embed.swing.JFXPanel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import static java.awt.BorderLayout.*;
 
@@ -44,8 +46,9 @@ public class MainGame extends JFrame implements ActionListener {
 
         }
     });
-
     String gameAudio = "DecisionGame/BackgroundNoise.mp3";
+    ArrayList<Player> players = new ArrayList<>();
+    private Player player;
 
     public MainGame() {
         MenuFrame = new JFrame();
@@ -95,7 +98,8 @@ public class MainGame extends JFrame implements ActionListener {
         new MainGame();
     }
 
-    public void displayUI(String StoryImg, String storyText, String storyButton1, String storyButton2){
+    public void displayUI(String position, String StoryImg, String storyText, String storyButton1, String storyButton2){
+        position = "";
         GameFrame = new JFrame();
         GameFrame.setLayout(new BorderLayout());
         GameFrame.setIconImage(new ImageIcon(getClass().getResource("icon.jpg")).getImage());
@@ -204,9 +208,75 @@ public class MainGame extends JFrame implements ActionListener {
         continueFrame.setVisible(true);
 
         watchLabel = new JLabel();
-        watchLabel.setBounds(500,250,120,50);
-
+        watchLabel.setFont(new Font("Chiller",Font.BOLD,20));
+        watchLabel.setForeground(Color.RED);
+        watchLabel.setBounds(250,150,120,50);
         continuePanel.add(watchLabel);
+    }
+    public void addPlayer(){
+        String nickname = JOptionPane.showInputDialog("Please enter your nickname");
+        String[] genderList ={"Male", "Female"};
+
+        boolean valid = false;
+        while(!valid)
+        {
+          try {
+              if(nickname.length() <= 16)
+              {
+                            String gender = (String) JOptionPane.showInputDialog(null,"Pick a Gender","Gender",JOptionPane.INFORMATION_MESSAGE,null,(Object[]) genderList, genderList[0]);
+                            valid = true;
+                            this.player = new Player(nickname,gender);
+              }else
+                  nickname = JOptionPane.showInputDialog( "nickname must be up to 16 characters long or less");
+
+          }  catch(NullPointerException npe)
+          {
+              int option = JOptionPane.showConfirmDialog(null, "All fields must be entered, Do you want to continue?", "Confirmation", JOptionPane.WARNING_MESSAGE);
+              nickname = JOptionPane.showInputDialog("Please enter your nickname");
+                continue;
+          }
+          break;
+
+        }
+
+        JOptionPane.showMessageDialog(null, "New Player has been added!","Confirmation",JOptionPane.INFORMATION_MESSAGE);
+
+        this.players.add(this.player);
+
+    }
+
+    public void viewStats(){
+        JComboBox<String> viewPlayers = new JComboBox();
+        JTextArea stats = new JTextArea();
+        stats.setText("Player Statistics:\n\n");
+        try {
+            if (this.players.size() < 1) {
+                JOptionPane.showMessageDialog(null, "No players were found in the system", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                Iterator<Player> iterator = this.players.iterator();
+                while (iterator.hasNext())
+                    viewPlayers.addItem(((Player)iterator.next()).getNickname() + "\n");
+                JOptionPane.showMessageDialog(null, viewPlayers, "Select Player to view details", JOptionPane.INFORMATION_MESSAGE);
+                int selected = viewPlayers.getSelectedIndex();
+                stats.append(((Player)this.players.get(selected)).toString());
+                JOptionPane.showMessageDialog(null, stats, "Player Details", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (NullPointerException npx) {
+            JOptionPane.showMessageDialog(null, "Error due to null pointer", "Error", JOptionPane.ERROR_MESSAGE);
+            npx.printStackTrace();
+        }
+    }
+
+
+    public void removePlayer(){
+        JComboBox<String> RemoveList = new JComboBox();
+        for (Player s : this.players)
+            RemoveList .addItem(s.getNickname());
+        JOptionPane.showMessageDialog(null, "Select player to be removed", "Remove Player", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, RemoveList , "Remove Player", JOptionPane.PLAIN_MESSAGE);
+        int selected = RemoveList .getSelectedIndex();
+        this.players.remove(selected);
+        JOptionPane.showMessageDialog(null, "Player has been Removed", "Player Removed", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public static void playAudio(String path)
@@ -232,168 +302,7 @@ public class MainGame extends JFrame implements ActionListener {
     public void stop(){
         timer.stop();
     }
-    public void reset(){
 
-    }
-    public void Slide1(){
-        position = "1";
-        displayUI("Pictures/Story1.jpg", "You're at a party, Its getting late...", "Go Home", "Stay");
-    }
-    public void Slide2()
-    {
-        position = "2";
-        displayUI("Pictures/drinks.jpg","You are offered drinks...","Accept","Decline");
-    }
-    public void Slide3()
-    {
-        position = "3";
-        displayUI("Pictures/opendoorway.jpg","You had a great night its time to go home","Go home", "");
-    }
-    public void Slide4()
-    {
-        position = "4";
-        displayUI("Pictures/forest.jpg","You walk through the woods and hear a noise within...","Investigate","Ignore");
-    }
-    public void Slide5()
-    {
-        position = "5";
-        displayUI("Pictures/forest3.jpg","You walk further the noise intensifies","Keep going?","Turn around");
-    }
-    public void Slide6()
-    {
-        position = "6";
-        displayUI("Pictures/woodshouse.jpg","You made it home, it appears you are alone","Go inside","");
-    }
-    public void Slide7()
-    {
-        position = "7";
-        displayUI("Pictures/forest7.png","You find the source of the noise, Its around the corner..","Look","RUN! Youre terrified");
-    }
-    public void Slide8()
-    {
-        position = "8";
-        displayUI("Pictures/monster.png","Your curiosity killed you","","Continue");
-    }
-    public void Slide9()
-    {
-        position = "9";
-        displayUI("Pictures/forest2.jpg","The noise chases you","Run home","Run to party for help");
-    }
-    public void Slide10()
-    {
-        position = "10";
-        displayUI("Pictures/nightbed.jpg","Youre getting tired","Go to sleep","Stay up a little longer");
-    }
-    public void Slide11()
-    {
-        position = "11";
-        displayUI("Pictures/survived.jpg","You slept through the night and made it to safety","","Continue");
-    }
-    public void Slide12()
-    {
-        position = "12";
-        displayUI("Pictures/forestroad.jpg","Which way was the party?!!","Left","Right");
-    }// skip 13 go straight to 14
-    public void Slide14()
-    {
-        position = "14";
-        displayUI("Pictures/forestnight.jpg","You fell and passed out, You wakeup in the middle of the woods","Find your way home","Try to find help");
-    }
-    public void Slide15()
-    {
-        position = "15";
-        displayUI("Pictures/forest7.png","You hear that same mound and unnerving noise...","Investigate","Ignore");
-    }
-    public void Slide16()
-    {
-        position = "16";
-        displayUI("Pictures/foresthouse.jpg","You see the party in the distance, the creature is catching up..","Run inside","Surrender");
-    }
-    public void Slide17()
-    {
-        position = "17";
-        displayUI("Pictures/monster4.jpg","The creature sees you and you can see it","Youre done","");
-    }// 17 will take you directly to 35
-    public void Slide19()
-    {
-        position = "19";
-        displayUI("Pictures/police.jpg","The creature followed you to the party and slaughtered every member","Investigate","Ignore");
-    }
-    public void Slide20()
-    {
-        position = "20";
-        displayUI("Pictures/bed.jpg","That noise you hear it again...","Peek out the window","Ignore it, youre hearing things");
-    }
-    public void Slide21()
-    {
-        position = "21";
-        displayUI("Pictures/shadow.jpg","You see.. something but you cant make it out","Squint","Go to sleep youre seeing things");
-    }
-    public void Slide22()
-    {
-        position = "22";
-        displayUI("Pictures/monsterlooking.png","The noise gets louder and the monster charges towards you","HIDE","");
-    }
-    public void Slide23()
-    {
-        position = "23";
-        displayUI("Pictures/nightbed.jpg","You go back to sleep","Close your eyes","");
-    }
-    public void Slide24()
-    {
-        position = "24";
-        displayUI("Pictures/stairs.jpg","You run to the hall and need to find a safe place","Run Upstairs","Basement");
-    }
-    public void Slide25()
-    {
-        position = "25";
-        displayUI("Pictures/firehouse.jpg","You burn the house down Cremating the creature inside ","","Continue");
-    }
-    public void Slide26()
-    {
-        position = "26";
-        displayUI("Pictures/doormonster.png","Youre woken by a loud creek, as your door swings open","Sleep it off","Inspect");
-    }
-    public void Slide27()
-    {
-        position = "27";
-        displayUI("Pictures/downstairs.jpg","You hear the creature has shifted to the basement..","Run..lock basement door","Arm yourself");
-    }
-    public void Slide28()
-    {
-        position = "28";
-        displayUI("Pictures/monster3.jpg","You are face to face with the monster","Run..Lock yourself in basement","surrender");
-    }
-    public void Slide29()
-    {
-        position = "29";
-        displayUI("Pictures/monster3.jpg","You see it","push it into the basement and lock it","any better ideas?");
-    }
-    public void Slide30()
-    {
-        position = "30";
-        displayUI("Pictures/doorknob.jpg","You couldnt lock the door, the lock was smashed","It knows where you are","");
-    }
-    public void Slide31()
-    {
-        position = "31";
-        displayUI("Pictures/monster2.png","The creature shreds you with his teeth and you are devoured","","Continue");
-    }// no 32
-    public void Slide33()
-    {
-        position = "33";
-        displayUI("Pictures/gohome.jpg","The entity is trapped but not for long","Burn the house down","Run for your life");
-    }
-    public void Slide34()
-    {
-        position = "34";
-        displayUI("Pictures/blank.jpg","Youre so close,but the basement door has been broken down","What now","");
-    }
-    public void Slide35()
-    {
-        position = "35";
-        displayUI("Pictures/monster2.png","It takes you to the forest and tears off your libs.. your soul leaves your body you get burried alive","","Continue");
-    }
 
 
 
@@ -403,9 +312,18 @@ public class MainGame extends JFrame implements ActionListener {
 
         if (UI == "Press to Play" || e.getSource() == this.StartButton) {
             playAudio(gameAudio);
-            Slide1();
+            displayUI(position = "1","Pictures/Story1.jpg", "You're at a party, Its getting late...", "Go Home", "Stay");
             start();
 
+        }
+        else if(e.getSource() == this.addPlayer){
+            addPlayer();
+        }
+        else if(e.getSource() == this.viewPlayer){
+            viewStats();
+        }
+        else if(e.getSource() == this.removePlayer){
+            removePlayer();
         }
 
     }
@@ -422,11 +340,10 @@ public class MainGame extends JFrame implements ActionListener {
                         switch(yourOption)
                         {
                             case "opt1":
-                                Slide4();
-
+                                displayUI( position = "4","Pictures/forest.jpg","You walk through the woods and hear a noise within...","Investigate","Ignore");
                                 break;
                             case "opt2":
-                                Slide2();
+                                displayUI(position = "2","Pictures/drinks.jpg","You are offered drinks...","Accept","Decline");
                                 break;
                         }
 
@@ -435,10 +352,10 @@ public class MainGame extends JFrame implements ActionListener {
                     switch (yourOption)
                         {
                             case "opt1":
-                                Slide14();
+                                displayUI(position = "14","Pictures/forestnight.jpg","You fell and passed out, You wakeup in the middle of the woods","Find your way home","Try to find help");
                                 break;
                             case "opt2":
-                                Slide3();
+                                displayUI(position = "3","Pictures/opendoorway.jpg","You had a great night its time to go home","Go home", "");
                                 break;
                         }
                         break;
@@ -446,7 +363,7 @@ public class MainGame extends JFrame implements ActionListener {
                     switch (yourOption)
                     {
                         case "opt1":
-                            Slide4();
+                            displayUI( position = "4","Pictures/forest.jpg","You walk through the woods and hear a noise within...","Investigate","Ignore");
                             break;
                         case "opt2":
                             break;
@@ -457,10 +374,10 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide5();
+                                displayUI(position = "5","Pictures/forest3.jpg","You walk further the noise intensifies","Keep going?","Turn around");
                                 break;
                             case "opt2":
-                                Slide6();
+                                displayUI(position = "6","Pictures/woodshouse.jpg","You made it home, it appears you are alone","Go inside","");
                                 break;
                         }
                         break;
@@ -468,10 +385,10 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide7();
+                                displayUI(position = "7","Pictures/forest7.png","You find the source of the noise, Its around the corner..","Look","RUN! Youre terrified");
                                 break;
                             case "opt2":
-                                Slide6();
+                                displayUI(position = "6","Pictures/woodshouse.jpg","You made it home, it appears you are alone","Go inside","");
                                 break;
                         }
                         break;
@@ -479,7 +396,7 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide10();
+                                displayUI(position = "10","Pictures/nightbed.jpg","Youre getting tired","Go to sleep","Stay up a little longer");
                                 break;
                             case "opt2":
                                 break;
@@ -489,22 +406,10 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide8();
+                                displayUI(position = "8","Pictures/monster.png","Your curiosity killed you","","Continue");
                                 break;
                             case "opt2":
-                                Slide9();
-                                break;
-                        }
-
-                    case "8":
-                        switch (yourOption)
-                        {
-                            case "opt1":
-                                break;
-                            case "opt2":
-                                continuationFrame();
-                                watchLabel.setText(minutesString+":"+secondsString);
-                                stop();
+                                displayUI(position = "9","Pictures/forest2.jpg","The noise chases you","Run home","Run to party for help");
                                 break;
                         }
                         break;
@@ -512,10 +417,10 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide6();
+                                displayUI(position = "6","Pictures/woodshouse.jpg","You made it home, it appears you are alone","Go inside","");
                                 break;
                             case "opt2":
-                                Slide12();
+                                displayUI(position = "12","Pictures/forestroad.jpg","Which way was the party?!!","Left","Right");
                                 break;
                         }
                         break;
@@ -523,13 +428,14 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide11();
+                                displayUI(position = "11","Pictures/survived.jpg","You slept through the night and made it to safety","","Continue");
                                 break;
                             case "opt2":
-                                Slide20();
+                                displayUI(position = "20","Pictures/bed.jpg","That noise you hear it again...","Peek out the window","Ignore it, youre hearing things");
                                 break;
                         }
                         break;
+                    case "8" :
                     case "11":
                     case "19":
                     case "25":
@@ -541,6 +447,7 @@ public class MainGame extends JFrame implements ActionListener {
                                 break;
                             case "opt2":
                                 continuationFrame();
+                                watchLabel.setText(minutesString+":"+secondsString);
                                 stop();
                                 break;
                         }
@@ -549,10 +456,10 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide14();
+                                displayUI(position = "14","Pictures/forestnight.jpg","You fell and passed out, You wakeup in the middle of the woods","Find your way home","Try to find help");
                                 break;
                             case "opt2":
-                                Slide16();
+                                displayUI(position = "16","Pictures/foresthouse.jpg","You see the party in the distance, the creature is catching up..","Run inside","Surrender");
                                 break;
                         }
                         break;
@@ -560,7 +467,7 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide14();
+                                displayUI(position = "14","Pictures/forestnight.jpg","You fell and passed out, You wakeup in the middle of the woods","Find your way home","Try to find help");
                                 break;
                             case "opt2":
                                 break;
@@ -570,10 +477,10 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide4();
+                                displayUI( position = "4","Pictures/forest.jpg","You walk through the woods and hear a noise within...","Investigate","Ignore");
                                 break;
                             case "opt2":
-                                Slide15();
+                                displayUI(position = "15","Pictures/forest7.png","You hear that same mound and unnerving noise...","Investigate","Ignore");
                                 break;
                         }
                         break;
@@ -581,10 +488,10 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide19();
+                                displayUI(position = "19","Pictures/police.jpg","The creature followed you to the party and slaughtered every member","","continue");
                                 break;
                             case "opt2":
-                                Slide17();
+                                displayUI(position = "17","Pictures/monster4.jpg","The creature sees you and you can see it","Youre done","");
                                 break;
                         }
                         break;
@@ -592,7 +499,7 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide35();
+                                displayUI(position = "35","Pictures/monster2.png","It takes you to the forest and tears off your libs.. your soul leaves your body you get burried alive","","Continue");
                                 break;
                             case "opt2":
 
@@ -603,10 +510,10 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide21();
+                                displayUI(position = "21","Pictures/shadow.jpg","You see.. something but you cant make it out","Squint","Go to sleep youre seeing things");
                                 break;
                             case "opt2":
-                                Slide26();
+                                displayUI(position = "26","Pictures/doormonster.png","Youre woken by a loud creek, as your door swings open","Sleep it off","Inspect");
                                 break;
                         }
                         break;
@@ -614,10 +521,10 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide22();
+                                displayUI(position = "22","Pictures/monsterlooking.png","The noise gets louder and the monster charges towards you","HIDE","");
                                 break;
                             case "opt2":
-                                Slide23();
+                                displayUI(position = "23","Pictures/nightbed.jpg","You go back to sleep","Close your eyes","");
                                 break;
                         }
                         break;
@@ -625,7 +532,7 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide24();
+                                displayUI(position = "24","Pictures/stairs.jpg","You run to the hall and need to find a safe place","Run Upstairs","Basement");
                                 break;
                             case "opt2":
 
@@ -636,7 +543,7 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide26();
+                                displayUI(position = "26","Pictures/doormonster.png","Youre woken by a loud creek, as your door swings open","Sleep it off","Inspect");
                                 break;
                             case "opt2":
 
@@ -647,10 +554,10 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide27();
+                                displayUI(position = "27","Pictures/downstairs.jpg","You hear the creature has shifted to the basement..","Run..lock basement door","Arm yourself");
                                 break;
                             case "opt2":
-                                Slide30();
+                                displayUI(position = "30","Pictures/doorknob.jpg","You couldnt lock the door, the lock was smashed","It knows where you are","");
                                 break;
                         }
                         break;
@@ -658,10 +565,10 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide30();
+                                displayUI(position = "30","Pictures/doorknob.jpg","You couldnt lock the door, the lock was smashed","It knows where you are","");
                                 break;
                             case "opt2":
-                                Slide28();
+                                displayUI(position = "28","Pictures/monster3.jpg","You are face to face with the monster","Run..Lock yourself in basement","surrender");
                                 break;
                         }
                         break;
@@ -669,10 +576,10 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide28();
+                                displayUI(position = "28","Pictures/monster3.jpg","You are face to face with the monster","Run..Lock yourself in basement","surrender");
                                 break;
                             case "opt2":
-                                Slide29();
+                                displayUI(position = "29","Pictures/monster3.jpg","You see it","push it into the basement and lock it","any better ideas?");
                                 break;
                         }
                         break;
@@ -680,10 +587,10 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide30();
+                                displayUI(position = "30","Pictures/doorknob.jpg","You couldnt lock the door, the lock was smashed","It knows where you are","");
                                 break;
                             case "opt2":
-                                Slide35();
+                                displayUI(position = "35","Pictures/monster2.png","It takes you to the forest and tears off your libs.. your soul leaves your body you get burried alive","","Continue");
                                 break;
                         }
                         break;
@@ -691,10 +598,10 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide33();
+                                displayUI(position = "33","Pictures/gohome.jpg","The entity is trapped but not for long","Burn the house down","Run for your life");
                                 break;
                             case "opt2":
-                                Slide35();
+                                displayUI(position = "35","Pictures/monster2.png","It takes you to the forest and tears off your libs.. your soul leaves your body you get burried alive","","Continue");
                                 break;
                         }
                         break;
@@ -702,7 +609,7 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide31();
+                                displayUI(position = "31","Pictures/monster2.png","The creature shreds you with his teeth and you are devoured","","Continue");
                                 break;
                             case "opt2":
 
@@ -713,10 +620,10 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide25();
+                                displayUI(position = "25","Pictures/firehouse.jpg","You burn the house down Cremating the creature inside ","","Continue");
                                 break;
                             case "opt2":
-                                Slide34();
+                                displayUI(position = "34","Pictures/blank.jpg","Youre so close,but the basement door has been broken down","What now","");
                                 break;
                         }
                         break;
@@ -724,7 +631,7 @@ public class MainGame extends JFrame implements ActionListener {
                         switch (yourOption)
                         {
                             case "opt1":
-                                Slide28();
+                                displayUI(position = "28","Pictures/monster3.jpg","You are face to face with the monster","Run..Lock yourself in basement","surrender");
                                 break;
                             case "opt2":
 

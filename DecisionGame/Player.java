@@ -1,10 +1,18 @@
 package DecisionGame;
 
-public class Player {
-    String nickname;
+import java.util.ArrayList;
 
-    public Player(String nickname) {
-       setNickname(nickname);
+public class Player {
+    private String nickname;
+    private String gender;
+
+    public Player(){
+        this("Not given","Not given");
+    }
+
+    public Player(String nickname, String gender) {
+        setNickname(nickname);
+        setGender(gender);
     }
 
     public String getNickname() {
@@ -12,11 +20,18 @@ public class Player {
     }
 
     public void setNickname(String nickname) {
-        setNickname(nickname);
+        this.nickname=nickname;
     }
 
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+       this.gender=gender;
+    }
 
     public String toString() {
-        return "Player nickname: " + getNickname();
+        return "Player:\n "+ "Nickname:" + getNickname() + "\nGender:" + getGender();
     }
 }
