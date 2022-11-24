@@ -1,6 +1,9 @@
 package DecisionGame;
 
-import java.io.File;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.*;
+
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javax.swing.*;
@@ -71,6 +74,8 @@ public class MainGame extends JFrame implements ActionListener {
 
         container = MenuFrame.getContentPane();
 
+        openSystem();
+
         HeadingPanel = new JPanel();
         HeadingPanel.setBounds(0,40,700,100);
         HeadingPanel.setBackground(Color.BLACK);
@@ -100,13 +105,14 @@ public class MainGame extends JFrame implements ActionListener {
         MenuFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         MenuFrame.setVisible(true);
 
-
+        openFiles();
     }
     public static void main(String[] args) {
         new MainGame();
     }
 
     public void displayUI(String position, String StoryImg, String storyText, String storyButton1, String storyButton2){
+        MenuFrame.setVisible(false);
         position = "";
         GameFrame = new JFrame();
         GameFrame.setLayout(new BorderLayout());
@@ -122,6 +128,7 @@ public class MainGame extends JFrame implements ActionListener {
         GameFrame.setLocationRelativeTo(null);
 
         container = GameFrame.getContentPane();
+
 
         GamePanel = new JPanel();
         GamePanel.setBounds(700,100,700,400);
@@ -220,13 +227,13 @@ public class MainGame extends JFrame implements ActionListener {
         continueFrame.setVisible(true);
 
         timeTaken = new JLabel("Time it took you to finish the game: ");
-        timeTaken.setFont(new Font("Chiller",Font.BOLD,20));
+        timeTaken.setFont(new Font("Chiller",Font.BOLD,30));
         timeTaken.setForeground(Color.RED);
-        timeTaken.setBounds(200,150,250,50);
+        timeTaken.setBounds(100,150,450,50);
         continuePanel.add(timeTaken);
 
         watchLabel = new JLabel();
-        watchLabel.setFont(new Font("Chiller",Font.BOLD,20));
+        watchLabel.setFont(new Font("Chiller",Font.BOLD,30));
         watchLabel.setForeground(Color.RED);
         watchLabel.setBounds(450,150,120,50);
         continuePanel.add(watchLabel);
@@ -339,7 +346,59 @@ public class MainGame extends JFrame implements ActionListener {
 
         timer.stop();
     }
+    public void saveFiles() throws IOException{
+        ObjectOutputStream playerOutput = new ObjectOutputStream(new FileOutputStream("PlayerStats.dat"));
+        playerOutput.writeObject(playerStats);
+        playerOutput.close();
+    }
+    public void openFiles() {
+        try{
+        File playerFile = new File("PlayerStats.dat");
 
+        if (playerFile.exists()) {
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(playerFile));
+
+            playerStats = (ArrayList<Stats>) ois.readObject();
+            ois.close();
+
+            JOptionPane.showMessageDialog(null, "Files loaded onto the system", "Files loaded", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            playerFile.createNewFile();
+            JOptionPane.showMessageDialog(null, "File has been created");
+        }
+    }catch(ClassNotFoundException cce) {
+            JOptionPane.showMessageDialog(null,"Class of object deserialised not a match for anything used in this application","Error",JOptionPane.ERROR_MESSAGE);
+            cce.printStackTrace();
+        }
+        catch (FileNotFoundException fnfe) {
+            JOptionPane.showMessageDialog(null,"File not found","Error",JOptionPane.ERROR_MESSAGE);
+            fnfe.printStackTrace();
+        }
+        catch (IOException ioe) {
+            JOptionPane.showMessageDialog(null,"Problem reading from the file","Error",JOptionPane.ERROR_MESSAGE);
+            ioe.printStackTrace();
+        }
+    }
+
+    public void openSystem(){
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int option = JOptionPane.showConfirmDialog(null,"Are you sure you want to exit the game?","Confirmation",JOptionPane.YES_NO_OPTION);
+
+                if(option == JOptionPane.YES_OPTION){
+                    try{
+                        saveFiles();
+                        JOptionPane.showMessageDialog(null,"Data has been saved","Saved",JOptionPane.INFORMATION_MESSAGE);
+                    }catch(IOException ioe){
+                        JOptionPane.showMessageDialog(null,"Error saving files");
+                        ioe.printStackTrace();
+                    }
+                    System.exit(0);
+                }
+            }
+        });
+    }
 
 
     public void actionPerformed(ActionEvent e) {
@@ -362,8 +421,6 @@ public class MainGame extends JFrame implements ActionListener {
         }
 
     }
-
-
         public class ChoiceHandler implements ActionListener{
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -371,10 +428,12 @@ public class MainGame extends JFrame implements ActionListener {
 
                 switch(position)
                 {
+
                     case "1":
                         switch(yourOption)
                         {
                             case "opt1":
+
                                 displayUI( position = "4","Pictures/forest.jpg","You walk through the woods and hear a noise within...","Investigate","Ignore");
                                 break;
                             case "opt2":
