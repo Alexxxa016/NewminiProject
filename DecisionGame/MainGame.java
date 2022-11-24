@@ -18,7 +18,7 @@ import static java.awt.BorderLayout.*;
 public class MainGame extends JFrame implements ActionListener {
 
     String position="";
-    private JLabel WelcomeSign, GameLabel, gameImage, OptionLabel, stopwatchLabel, watchLabel;
+    private JLabel WelcomeSign, GameLabel, gameImage, OptionLabel, stopwatchLabel, watchLabel, timeTaken;
     private JPanel HeadingPanel, GamePanel, StartButtonPanel, Rbuttons,GameBackgroundImage, continuePanel;
     private JButton StartButton, viewPlayer, addPlayer, removePlayer;
     private JFrame MenuFrame, continueFrame, GameFrame;
@@ -30,25 +30,31 @@ public class MainGame extends JFrame implements ActionListener {
     int elapsedTime =0;
     int seconds =0;
     int minutes =0;
+    private String finalTime;
+    private float shortestTime = 0;
+    private float longestTime = 0;
     boolean started = false;
-    String secondsString = String.format("%02d", seconds);
-    String minutesString = String.format("%02d", minutes);
+    private String secondsString = String.format("%02d", seconds);
+    private String minutesString = String.format("%02d", minutes);
     ChoiceHandler choiceHandler = new ChoiceHandler();
     Timer timer = new Timer(1000, new ActionListener() {
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e) {    //i used this to help me create a stop watch : https://www.codespeedy.com/create-a-stopwatch-in-java/#:~:text=Creating%20a%20stopwatch%20in%20Java,next().
             elapsedTime += 1000;
             minutes = (elapsedTime/60000) % 60;
             seconds = (elapsedTime/1000) % 60;
             secondsString = String.format("%02d", seconds);
             minutesString = String.format("%02d", minutes);
-            stopwatchLabel.setText(minutesString+":"+secondsString);
+            finalTime =minutesString+":"+secondsString;
+            stopwatchLabel.setText(finalTime);
 
         }
     });
     String gameAudio = "DecisionGame/BackgroundNoise.mp3";
     ArrayList<Player> players = new ArrayList<>();
+    ArrayList<Stats> playerStats = new ArrayList<>();
     private Player player;
+    private Stats stats;
 
     public MainGame() {
         MenuFrame = new JFrame();
@@ -93,6 +99,8 @@ public class MainGame extends JFrame implements ActionListener {
 
         MenuFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         MenuFrame.setVisible(true);
+
+
     }
     public static void main(String[] args) {
         new MainGame();
@@ -102,7 +110,11 @@ public class MainGame extends JFrame implements ActionListener {
         position = "";
         GameFrame = new JFrame();
         GameFrame.setLayout(new BorderLayout());
-        GameFrame.setIconImage(new ImageIcon(getClass().getResource("icon.jpg")).getImage());
+        try {
+            GameFrame.setIconImage(new ImageIcon(getClass().getResource("icon.jpg")).getImage());
+        }catch(Exception ex){
+            JOptionPane.showMessageDialog(null,"The image could not be found","Not found",JOptionPane.ERROR_MESSAGE);
+        }
         GameFrame.setResizable(false);
         GameFrame.setSize(800, 600);
         GameFrame.getContentPane().setBackground(Color.white);
@@ -207,11 +219,33 @@ public class MainGame extends JFrame implements ActionListener {
         continueFrame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         continueFrame.setVisible(true);
 
+        timeTaken = new JLabel("Time it took you to finish the game: ");
+        timeTaken.setFont(new Font("Chiller",Font.BOLD,20));
+        timeTaken.setForeground(Color.RED);
+        timeTaken.setBounds(200,150,250,50);
+        continuePanel.add(timeTaken);
+
         watchLabel = new JLabel();
         watchLabel.setFont(new Font("Chiller",Font.BOLD,20));
         watchLabel.setForeground(Color.RED);
-        watchLabel.setBounds(250,150,120,50);
+        watchLabel.setBounds(450,150,120,50);
         continuePanel.add(watchLabel);
+
+        System.out.println(elapsedTime);
+    }
+    public void shortestTime(){
+        for(Stats s : playerStats){
+            if(elapsedTime < shortestTime){
+                shortestTime = elapsedTime;
+            }
+        }
+    }
+    public void longestTime(){
+        for(Stats s : playerStats){
+            if(elapsedTime < longestTime){
+                longestTime = elapsedTime;
+            }
+        }
     }
     public void addPlayer(){
         String nickname = JOptionPane.showInputDialog("Please enter your nickname");
@@ -225,13 +259,14 @@ public class MainGame extends JFrame implements ActionListener {
               {
                             String gender = (String) JOptionPane.showInputDialog(null,"Pick a Gender","Gender",JOptionPane.INFORMATION_MESSAGE,null,(Object[]) genderList, genderList[0]);
                             valid = true;
-                            this.player = new Player(nickname,gender);
+                            this.player = new Stats(nickname,gender,finalTime,shortestTime,longestTime);
               }else
                   nickname = JOptionPane.showInputDialog( "nickname must be up to 16 characters long or less");
 
           }  catch(NullPointerException npe)
           {
               int option = JOptionPane.showConfirmDialog(null, "All fields must be entered, Do you want to continue?", "Confirmation", JOptionPane.WARNING_MESSAGE);
+              if(option == 0)
               nickname = JOptionPane.showInputDialog("Please enter your nickname");
                 continue;
           }
@@ -297,13 +332,13 @@ public class MainGame extends JFrame implements ActionListener {
 
 
     public void start(){
+
         timer.start();
     }
     public void stop(){
+
         timer.stop();
     }
-
-
 
 
 

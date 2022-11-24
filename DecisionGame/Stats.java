@@ -1,19 +1,35 @@
 package DecisionGame;
 
-public class Stats extends Player{
+import java.io.Serializable;
+
+public class Stats extends Player implements Serializable {
     private String gameTime;
-    private String shortestGame;
-    private String longestGame;
+    private float shortestGame;
+    private float longestGame;
 
     public Stats() {
-        this("Not Given","Not Given","Unknown","Unknown","Unknown");
+        this("Not Given","Not Given","Unknown",0,0);
     }
-
-    public Stats(String nickname, String gender, String gameTime, String shortestGame, String longestGame) {
+    public Stats(String nickname, String gender, String gameTime, float shortestGame, float longestGame) {
         super(nickname, gender);
         setGameTime(gameTime);
         setShortestGame(shortestGame);
-        setLongestGame(longestGame);
+    }
+
+    public float getLongestGame() {
+        return longestGame;
+    }
+
+    public void setLongestGame(float longestGame) {
+        this.longestGame = longestGame;
+    }
+
+    public float getShortestGame() {
+        return shortestGame;
+    }
+
+    public void setShortestGame(float shortestGame) {
+        this.shortestGame = shortestGame;
     }
 
     public String getGameTime() {
@@ -24,21 +40,9 @@ public class Stats extends Player{
         this.gameTime = gameTime;
     }
 
-    public String getShortestGame() {
-        return shortestGame;
+    @Override
+    public String toString() {
+        return "Player:\n "+ "Nickname:" + getNickname() + "\nGender:" + getGender() + "\nPlayer ID: "+getPlayerID() +"\nGame Time: " + getGameTime() +
+                "\nShortest Game: "+getShortestGame()+"\nLongest Game: "+getLongestGame();
     }
-
-    public void setShortestGame(String shortestGame) {
-        this.shortestGame = shortestGame;
-    }
-
-    public String getLongestGame() {
-        return longestGame;
-    }
-
-    public void setLongestGame(String longestGame) {
-        this.longestGame = longestGame;
-    }
-
-
 }

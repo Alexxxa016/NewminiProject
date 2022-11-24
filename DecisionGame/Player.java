@@ -1,10 +1,11 @@
 package DecisionGame;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 /** An instantiable class which defines a Player.
     @author Aleksandra Buchholz
  */
-public class Player {
+public class Player implements Serializable {
     private int playerID;
     private String nickname;
     private String gender;
@@ -96,7 +97,4 @@ public class Player {
      *  Method to get the state of a Player object
      *  @return a String value specifying the state of a Player object
      */
-    public String toString() {
-        return "Player:\n "+ "Nickname:" + getNickname() + "\nGender:" + getGender() + "\nPlayer ID: "+getPlayerID();
-    }
 }
